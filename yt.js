@@ -39,20 +39,31 @@ const req = await fetch("https://m.youtube.com/youtubei/v1/browse?prettyPrint=fa
 
 const res = await req.json();
 
-const cId = res.header.c4TabbedHeaderRenderer.channelId;
-const title = res.header.c4TabbedHeaderRenderer.title;
-const username = res.header.c4TabbedHeaderRenderer.navigationEndpoint.browseEndpoint.canonicalBaseUrl;
-const subCount = res.header.c4TabbedHeaderRenderer.subscriberCountText.accessibility.accessibilityData.label;
+// const cId = res.header.c4TabbedHeaderRenderer.channelId;
+// const title = res.header.c4TabbedHeaderRenderer.title;
+// const username = res.header.c4TabbedHeaderRenderer.navigationEndpoint.browseEndpoint.canonicalBaseUrl;
+// const subCount = res.header.c4TabbedHeaderRenderer.subscriberCountText.accessibility.accessibilityData.label;
 const videosCountText = res.header.c4TabbedHeaderRenderer.videosCountText.runs
 
 //const title = res.metadata.channelMetadataRenderer.title;
-const description = res.metadata.channelMetadataRenderer.description;
+//const description = res.metadata.channelMetadataRenderer.description;
+
 //const externalId = res.metadata.channelMetadataRenderer.externalId;
 const keywords =res.metadata.channelMetadataRenderer.keywords;
-const avatar = res.metadata.channelMetadataRenderer.avatar.thumbnails
+// const avatar = res.metadata.channelMetadataRenderer.avatar.thumbnails
 //const vanityChannelUrl = res.metadata.channelMetadataRenderer.avatar.vanityChannelUrl
 
 
+
+var cId ;
+var name ;
+var username;
+var subCount;
+var avatar;
+var description;
+
+
+////////////////////////////////////
 
 const channelIdPaths = findAllPropertyPathsEndsWith(res, "channelId");
 //console.log(channelIdPaths);
@@ -63,10 +74,10 @@ if (channelIdmatchingItems.length > 0) {
   for (const path of channelIdmatchingItems) {
     const value = getValueFromPath(res, path);
     console.log(`res.${path} : ${value}`);
+    cId = value;
   }
 }
 
-////////////////////////////////////
 
 const channelTitlePaths = findAllPropertyPathsEndsWith(res, "title");
 //console.log(channelTitlePaths);
@@ -77,51 +88,81 @@ if (channelTitlematchingItems.length > 0) {
   for (const path of channelTitlematchingItems) {
     const value = getValueFromPath(res, path);
     console.log(`res.${path} : ${value}`);
+    name = value;
   }
 }
+
+
+const subscriberCountPaths = findAllPropertyPathsEndsWith(res, "accessibilityData.label");
+//console.log(subscriberCountPaths);
+const correctSubscriberCountPath = 'subscriberCountText';
+const subscriberCountematchingItems = subscriberCountPaths.filter(item => item.includes(correctSubscriberCountPath));
+
+if (subscriberCountematchingItems.length > 0) { 
+  for (const path of subscriberCountematchingItems) {
+    const value = getValueFromPath(res, path);
+    console.log(`res.${path} : ${value}`);
+    subCount = value;
+  }
+}
+
+
+const handlePaths = findAllPropertyPathsEndsWith(res, 'browseEndpoint.canonicalBaseUrl');
+//console.log(handlePaths);
+const correctHandlePath = 'header.c4TabbedHeaderRenderer.navigationEndpoint';
+const handlematchingItems = handlePaths.filter(item => item.includes(correctHandlePath));
+
+if (handlematchingItems.length > 0) { 
+  for (const path of handlematchingItems) {
+    const value = getValueFromPath(res, path);
+    console.log(`res.${path}: ${value}`);
+    username = value;
+  }
+} 
+
+
+const avatarPaths = findAllPropertyPathsEndsWith(res, 'avatar.thumbnails');
+console.log(avatarPaths);
+const correctavatarPath = 'header.c4TabbedHeaderRenderer';
+const avatarmatchingItems = avatarPaths.filter(item => item.includes(correctavatarPath));
+
+if (avatarmatchingItems.length > 0) { 
+  for (const path of avatarmatchingItems) {
+    const value = getValueFromPath(res, path);
+    console.log(`res.${path}: ${value}`);
+    avatar = value;
+  }
+} 
+
+
+const descriptionPaths = findAllPropertyPathsEndsWith(res, 'description');
+//console.log(descriptionPaths);
+const correctdescriptionPath = 'metadata.channelMetadataRenderer';
+const descriptionmatchingItems = descriptionPaths.filter(item => item.includes(correctdescriptionPath));
+
+if (descriptionmatchingItems.length > 0) { 
+  for (const path of descriptionmatchingItems) {
+    const value = getValueFromPath(res, path);
+    console.log(`res.${path}: ${value}`);
+    description = value;
+  }
+} 
+
+
+
+
 
 
 const Obj = {
-cid: cId,
-title: title,
-username :username,
-subCount : subCount
-}
 
-//console.log(res.header.c4TabbedHeaderRenderer.videosCountText.runs);
-
-
-const propertyPaths = findAllPropertyPaths(res, "canonicalBaseUrl");
-
-if (propertyPaths.length > 0) { 
-  for (const path of propertyPaths) {
-    const value = getValueFromPath(res, path);
-    //console.log(`res.${path}`);
+   cId : cId,
+   name : name,
+   username: username.replaceAll("/@", ""),
+   subCount : subCount.replaceAll(" subscribers", "")
   }
   
-} else {console.log(`Property '${targetProperty}' not found in the JSON objectt.`);}
-
-
-
-
-const handlePrperty = 'browseEndpoint.canonicalBaseUrl';
-const handlePaths = findAllPropertyPathsEndsWith(res, handlePrperty);
-console.log("__________________",handlePaths.length);
-const correctHandlePath = 'header.c4TabbedHeaderRenderer.navigationEndpoint';
-const matchingItems = handlePaths.filter(item => item.includes(correctHandlePath));
-
-if (matchingItems.length > 0) { 
-  for (const path of matchingItems) {
-    const value = getValueFromPath(res, path);
-    console.log(`res.${path}: ${value}`);
-  }
+  console.log(Obj);
   
-} 
-else {  console.log(`No items found for partial path '${correctHandlePath}'.`);
-}
-
-
-
 
 
 
