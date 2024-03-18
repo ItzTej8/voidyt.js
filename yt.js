@@ -1,7 +1,7 @@
 
 //import { getChannelInfoYT} from '/modules/yt.js';
 
-async function t()
+export async function t()
 {
 
 const req = await fetch("https://m.youtube.com/youtubei/v1/browse?prettyPrint=false", {
@@ -54,6 +54,33 @@ const avatar = res.metadata.channelMetadataRenderer.avatar.thumbnails
 
 
 
+const channelIdPaths = findAllPropertyPathsEndsWith(res, "channelId");
+//console.log(channelIdPaths);
+const correctchannelIdPath = 'c4TabbedHeaderRenderer.channelId';
+const channelIdmatchingItems = channelIdPaths.filter(item => item.includes(correctchannelIdPath));
+
+if (channelIdmatchingItems.length > 0) { 
+  for (const path of channelIdmatchingItems) {
+    const value = getValueFromPath(res, path);
+    console.log(`res.${path} : ${value}`);
+  }
+}
+
+////////////////////////////////////
+
+const channelTitlePaths = findAllPropertyPathsEndsWith(res, "title");
+//console.log(channelTitlePaths);
+const correctchannelTitlePath = 'c4TabbedHeaderRenderer.title';
+const channelTitlematchingItems = channelTitlePaths.filter(item => item.includes(correctchannelTitlePath));
+
+if (channelTitlematchingItems.length > 0) { 
+  for (const path of channelTitlematchingItems) {
+    const value = getValueFromPath(res, path);
+    console.log(`res.${path} : ${value}`);
+  }
+}
+
+
 const Obj = {
 cid: cId,
 title: title,
@@ -66,11 +93,10 @@ subCount : subCount
 
 const propertyPaths = findAllPropertyPaths(res, "canonicalBaseUrl");
 
-if (propertyPaths.length > 0) {
-  //console.log(`Property '${targetProperty}' found at paths: ${propertyPaths.join(', ')}`);
+if (propertyPaths.length > 0) { 
   for (const path of propertyPaths) {
     const value = getValueFromPath(res, path);
-    //console.log(`res.${path}: ${value}`);
+    //console.log(`res.${path}`);
   }
   
 } else {console.log(`Property '${targetProperty}' not found in the JSON objectt.`);}
@@ -78,30 +104,20 @@ if (propertyPaths.length > 0) {
 
 
 
+const handlePrperty = 'browseEndpoint.canonicalBaseUrl';
+const handlePaths = findAllPropertyPathsEndsWith(res, handlePrperty);
+console.log("__________________",handlePaths.length);
+const correctHandlePath = 'header.c4TabbedHeaderRenderer.navigationEndpoint';
+const matchingItems = handlePaths.filter(item => item.includes(correctHandlePath));
 
-
-const targetProperty = 'canonicalBaseUrl';
-const propertyPaths2 = findAllPropertyPaths(res, targetProperty);
-
-
-console.log(propertyPaths2.length);
-
-const partialPath = 'header.c4TabbedHeaderRenderer.navigationEndpoint';
-
-const matchingItems = propertyPaths2.filter(item => item.includes(partialPath));
-
-if (matchingItems.length > 0) {
-  console.log(`Items found for partial path >>>>>  '${partialPath}' >>>>>`);
-  matchingItems.forEach(item => console.log(item));
-  
+if (matchingItems.length > 0) { 
   for (const path of matchingItems) {
     const value = getValueFromPath(res, path);
     console.log(`res.${path}: ${value}`);
   }
   
 } 
-else {
-          console.log(`No items found for partial path '${partialPath}'.`);
+else {  console.log(`No items found for partial path '${correctHandlePath}'.`);
 }
 
 
@@ -111,7 +127,6 @@ else {
 
 }
 
-t();
 
 
 
@@ -127,10 +142,6 @@ function getValueFromPath(obj, path) {
 }
 
 
-
-
-
-
 function findAllPropertyPathsEndsWith(obj, targetProperty, currentPath = '') {
   let paths = [];
   for (const key in obj) {
@@ -139,7 +150,7 @@ function findAllPropertyPathsEndsWith(obj, targetProperty, currentPath = '') {
       if (newPath.endsWith(targetProperty)) { // Check if the path ends with the target property
         paths.push(newPath);
       } else if (typeof obj[key] === 'object') {
-        const results = findAllPropertyPaths(obj[key], targetProperty, newPath);
+        const results = findAllPropertyPathsEndsWith(obj[key], targetProperty, newPath); // Corrected function name
         if (results.length > 0) {
           paths = paths.concat(results);
         }
@@ -148,6 +159,7 @@ function findAllPropertyPathsEndsWith(obj, targetProperty, currentPath = '') {
   }
   return paths;
 }
+
 
 
 // Function to check for a specific property and return all its paths
