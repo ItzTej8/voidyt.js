@@ -1,0 +1,11 @@
+{
+  "name": "voidyt",
+  "version": "1.0.0",
+  "description": "",
+  "main": "yt.js",
+  "scripts": {
+    "start": "node yt.js"
+  },
+  "author": "",
+  "license": "ISC"
+}

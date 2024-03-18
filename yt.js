@@ -73,7 +73,7 @@ if (propertyPaths.length > 0) {
     //console.log(`res.${path}: ${value}`);
   }
   
-} else {console.log(`Property '${targetProperty}' not found in the JSON object.`);}
+} else {console.log(`Property '${targetProperty}' not found in the JSON objectt.`);}
 
 
 
@@ -99,7 +99,8 @@ if (matchingItems.length > 0) {
     console.log(`res.${path}: ${value}`);
   }
   
-} else {
+} 
+else {
           console.log(`No items found for partial path '${partialPath}'.`);
 }
 
